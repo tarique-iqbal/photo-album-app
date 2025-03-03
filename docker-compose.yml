@@ -1,0 +1,54 @@
+version: '3.3'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+    container_name: album_api
+    working_dir: /var/www/album
+    volumes:
+      - ./album:/var/www/album
+    environment:
+      PHP_IDE_CONFIG: "serverName=album_docker"
+      XDEBUG_MODE: "debug"
+      XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9003"
+    networks:
+      - album_network
+    depends_on:
+      - mysql
+
+  nginx:
+    build:
+      context: .docker/nginx
+    container_name: album_nginx
+    volumes:
+      - ./album:/var/www/album
+    ports:
+      - "8080:80"
+    depends_on:
+      - php
+    networks:
+      - album_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: album_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: album
+      MYSQL_USER: album
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - album_network
+
+networks:
+  album_network:
+
+volumes:
+  mysql_data:

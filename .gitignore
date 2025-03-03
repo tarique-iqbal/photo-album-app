@@ -1,3 +1,12 @@
 /.DS_Store
 /.vscode
 /.idea
+
+# symfony/framework-bundle
+/album/.env.local
+/album/.env.local.php
+/album/.env.*.local
+/album/config/secrets/prod/prod.decrypt.private.php
+/album/public/bundles/
+/album/var/
+/album/vendor/
